@@ -1,0 +1,309 @@
+%\VignetteIndexEntry{Titolo}
+%\VignettePackage{GARS}
+%\VignetteEngine{knitr::knitr}
+
+% To compile this document
+% library(tools)
+% library(BiocStyle)
+% library(devtools)
+% library(knitr)
+% setwd("./vignettes/")
+
+% unlink(c("cache","figure","*.bst","*.sty","*.R","*.tex","*.log","*.aux","*.out","*.pdf","*.toc","*.blg","*.bbl"),recursive = T); Rcmd("Sweave --engine=knitr::knitr --pdf GARS.Rnw")
+
+
+% put the vignette in /inst/doc/ and
+% tools::compactPDF("../inst/doc/GARS.pdf",gs_quality = "ebook")
+
+\documentclass{article}
+<<style-knitr, eval=TRUE, echo=FALSE, results="asis">>=
+BiocStyle::latex(relative.path = TRUE)
+@
+\usepackage{subfig}% for combining multiple plots in one figure
+\usepackage[section]{placeins}
+\usepackage{amsmath}
+
+\newcommand{\gars}{\textit{GARS}}
+
+<<knitr, echo=FALSE, results="hide">>=
+library("knitr")
+opts_chunk$set(
+  tidy=FALSE,
+  dev="png",
+  fig.show="hide",
+#  fig.width=4, fig.height=4.5,
+  fig.width=10, fig.height=8,
+  fig.pos="tbh",
+  cache=TRUE,
+  message=FALSE)
+@
+
+
+% \author{Mattia Chiesa}
+% \author{Giada Maioli}
+% \author{Luca Piacentini}
+% \affil{Immunology and Functional Genomics Unit, Centro Cardiologico Monzino, IRCCS, Milan, Italy;}
+
+\author[1]{Mattia Chiesa}
+\author[2]{Giada Maioli}
+\author[1]{Luca Piacentini}
+\affil[1]{Immunology and Functional Genomics Unit, Centro Cardiologico Monzino, IRCCS, Milan, Italy;}
+\affil[2]{Universit\'a degli Studi di Pavia, Pavia, Italy}
+
+\title{GARS: a clustering-based Genetic Algorithm for the identification of Robust Subsets of variables in high-dimensional and challenging datasets}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Feature selection aims to identify and, remove redundant, irrelevant and noisy variables from high-dimensional datasets. Selecting informative features affects the subsequent classification and regression analyses by improving their overall performances. Several methods have been proposed to perform feature selection: most of them relies on univariate statistics, correlation, entropy measurements or the usage of backward/forward regressions.\\
+Herein, we propose an efficient, robust and fast method that adopts stochastic optimization approaches for high-dimensional. Genetic algorithms, a type of evolutionary algorithms, are often used to find solutions for optimization and search problems and promise to be effective on complex data. They operate on a population of potential solutions and apply the ``principle of survival of the fittest'' to produce the better approximation of the optimal solution.\\
+GARS is an innovative implementation of a clustering-based genetic algorithm that selects robust features in high-dimensional and challenging datasets.
+\end{abstract}
+
+\packageVersion{\Sexpr{BiocStyle::pkg_ver("GARS")}}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+
+%%%%%%%%%%%%%%% body
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction} \label{intro}
+A crucial step in a Data Mining analysis is Feature Selection, which is the process of identifying the most informative predictors to build accurate classification models. Indeed, many features could inadvertently introduce bias in a prediction model, lead to overfitting and increase the complexity in further downstream analysis. In last decades, several methods have been proposed to perform feature selection; they are usually grouped in three main classes \cite{saeys2007review, hira2015review}:
+\begin{itemize}
+  \item{\textbf{Filter Methods} - A measure based on statistics or entropy is used to rank an then select variables. The most popular filter methods are the \textit{Information Gain}, the \textit{ReliefF}, the \textit{Gini Index} and the $\chi^2$ test;}
+  \item{\textbf{Wrapper Methods} - The set of important features is identified using a classifier  to evaluate the accuracy of several combinations of variables. \textit{Backward/Forward/Stepwise-elimination} stategies belong to this category;}
+  \item{\textbf{Embedded Methods} - As for wrapper methods, a classifier is used to identify the best set of variables; however, in this case the procedure to identify the features is totally joined with the construction of the classifier. The ``tree-based'' classifiers (e.g. \textit{Decision trees} and the \textit{Random Forest}) are the widely used embedded methods.}
+\end{itemize}
+
+Genetic Algorithms (GAs) are heuristic adaptive search algorithms that simulate the Darwinian law of ``the survival of the fittest'' among individuals, over consecutive generations, for solving hard problems, such as pattern recognition and feature selection. A GA is traditionally composed of three main consecutive stages: first, a random set of candidate solutions, \textit{i.e.} chromosomes, is generated. Then, each chromosome is evaluated by a custom score, \textit{i.e. fitness function} that reflects how good a solution is. Finally, the evolutionary operators are sequentially applied to the entire population: \textit{Selection}, \textit{Crossover} and \textit{Mutation}. To find the optimal solution, this process has to be repeated several times: the starting chromosome population of a certain generation corresponds to the resulting chromosome population of the previous generation.\\
+The idea to use a GA to perform Feature Selection is not novel; however, all the developed GA-based methods needs a classifier to evaluate the goodness of a set of features (namely, they belong to the ``Wrapper'' or the ``Embedded'' category).  The classifiers mainly used to assess the selected features are the Support Vector Machines (GA-SVN) \cite{mohamad2005hybrid},  the k-Nearest Neighbours (GA-KNN) \cite{li2001gene}, the Random Forest (rfGA, see the \CRANpkg{caret} package for details), the LDA (caretGA, see the \CRANpkg{caret} package for details) \cite{kuhn2008caret} and maximum-likelihood based methods (GA-MLHD) \cite{ooi2003genetic}.\\
+One of the most relevant contexts where the feature selection is becoming more and more essential, is the \textit{-OMICs} field: in fact, datasets coming from genomics, transcriptomics, proteomics and metabolomics experiments are typically composed of a large number of features compared to the sample size; this poses a big challenge for a data mining analysis.\\
+In this context, we developed an innovative implementation of a clustering-based \textbf{G}enetic \textbf{A}lgorithm that selects  \textbf{R}obust \textbf{S}ubsets of features (\textbf{GARS}) in high-dimensional and challenging datasets. GARS has several benefits:
+\begin{enumerate}
+  \item it does not need any classifier to evaluate the goodness of the selected feature. The fitness is calculated by the averaged Silhouette Index \cite{rousseeuw1987silhouettes}, after computing a Multi-Dimensional Scaling of the data. This allows being less prone to overfitting and local optima;
+  \item it is relatively fast, when the number of features is relatively high (tens of thousands);
+  \item it can be used in multi-class classifcation problems;
+  \item even though it has been thought for solving \textit{-OMICs} tasks, it can be easily used in several other contexts (e.g. low-dimensional data);
+  \item it can be easily integrated with other R and Bioconductor packages for Data Mining (e.g. \CRANpkg{caret} and \Biocpkg{DaMiRseq}).
+\end{enumerate}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Using GARS: a classification analysis} \label{cap_wf}
+\subsection{The testing RNA-Seq dataset} \label{cap_test}
+The dataset used in this vignette comes from a miRNA-Seq experiment performed on cervical tissues \cite{witten2010ultra}; the dataset is composed of 714 miRNAs and 58 samples: 29 Tumor (T) and 29 Non-Tumor (N) cervical samples, respectively. In order to obtain a normalized gene expression matrix, we used the \Rfunction{DaMiR.normalization} function of the \Biocpkg{DaMiRseq} package with default parameters.\\
+
+<<chu_1, warning=FALSE>>=
+library(MLSeq)
+library(DaMiRseq)
+library(GARS)
+
+# load dataset
+filepath <- system.file("extdata/cervical.txt", package = "MLSeq")
+cervical <- read.table(filepath, header=TRUE)
+
+# replace "wild-card" characters with other characters
+rownames(cervical) <- gsub("*", "x", rownames(cervical), fixed = TRUE)
+rownames(cervical) <- gsub("-", "_", rownames(cervical), fixed = TRUE)
+
+# create the "class" vector
+class_vector <- data.frame(class = factor(rep(c("N","T"), c(29,29))))
+rownames(class_vector) <- colnames(cervical)
+
+# create a Summarized Experiment object
+SE_obj <- DaMiR.makeSE(cervical, class_vector)
+
+# filter and normalize the dataset
+datanorm <- DaMiR.normalization(SE_obj)
+
+@
+
+
+\subsection{Launch GARS} \label{cap_launch_wrap}
+After filtering and normalizing data we got a dataset with 157 expressed miRNAs and 58 samples.
+The best way to use \gars{} for selecting a robust set of features from an high-dimentional dataset is to exploit the wrapper function \Rfunction{GARS.GA}.
+A dataset must be provided, as well as a vector containing the class information. \gars{} gives the opportunity to provide input data in the form of \Robject{SummarizedExperiment}, \Robject{matrix} or \Robject{data.frame} objects. On one hand, \Robject{SummarizedExperiment} is preferred in the case of a RNA-Seq experiment; on the other hand, a \Robject{data.frame} allows the user to integrate expression data with other numerical and/or categorical features.
+
+In addition, several other parameters have to be set:
+
+\begin{itemize}
+  \item{\Robject{chr.num} - The number of chromosomes in each population. If the number of chromosomes is too small, the GA will explore a small part of the ``solution space'' (each chromosome is a candidate solution); conversely, if the number is too high, the GA will produce results very slowly. Default: 1000}
+  \item{\Robject{chr.len} - The length of each chromosome. \textbf{This argument is the most important in \gars{}: it corresponds to the length of the desired feature set}. Usually, in data mining analysis the number of features, needed to build a classification model, has to be much smaller than the number of observations (i.e. samples).}
+  \item{\Robject{generat} - The maximum number of generations. This number is usually high (hundreds to thousands): the higher the number of generations, the higher the probability to reach the best solution. Default: 500}
+  \item{\Robject{co.rate} - The probability to perform the crossover for each random couple of chromosomes. This parameter allows the evolution rate to be controlled and tuned. Default: 0.8}
+  \item{\Robject{mut.rate} - The probability to mutate each chromosome base. This parameter allows the evolution rate to be controlled and tuned. Default: 0.01}
+  \item{\Robject{n.elit} - The number of best chromosomes that must be ``preserved from the evolution''. This number is usually small compared to the number of chromosomes, in order to enhance the evolution.  Default: 10}
+  \item{\Robject{type.sel} - The algorithm that performs the Selection step. \textit{``Roulette Wheel''} and \textit{``Tournament''} selections are implemented. Default: \textit{Roulette Wheel}. }
+  \item{\Robject{type.co} - The algorithm that performs the Crossover step. \textit{``One point''} and \textit{``Two points''} crossover are implemented. Default: \textit{One point}.}
+  \item{\Robject{type.one.p.co} - In the case of \textit{``One point''} crossover, this argument allows setting the quartile where the crossover has to be applied. The user can choose among the first, the second and the third quartile. Default: First quartile. }
+  \item{\Robject{n.gen.conv} - The maximum number of consecutive generations with the same maximum fitness score. When the maximum fitness scores are the same for several generation, this means that the GA found the optimal solution (i.e. reached the convergence). This argument is useful to stop \gars{} when the convergence is reached. Default: 80. }
+  \item{\Robject{plots} - Whether generating plots or not. Default: yes.}
+  \item{\Robject{verbose} - Whether printing information in the console or not. Default: yes.}
+  \item{\Robject{n.Feat\_plot} - If \Robject{plots = yes}, the number of features to be plotted by \Rfunction{GARS.PlotFeaturesUsage}}
+
+\end{itemize}
+
+To speed up the execution time of the function, here we set \Robject{generat = 20}, \Robject{chr.num = 100} and \Robject{chr.len = 8}; however, for a typical -omic experiment (thousands of features), this is probably not sufficent  to find the best feature set. We strongly recomend to set accurately each parameter, trying different combinations of them (especially \Robject{chr.len}, See Section~\ref{cap3_1}).
+\newpage
+
+<<chu_2, dev="pdf">>=
+set.seed(123)
+res_GA <- GARS.GA(data=datanorm,
+                 classes = colData(datanorm),
+                 chr.num = 100,
+                 chr.len = 8,
+                 generat = 20,
+                 co.rate = 0.8,
+                 mut.rate = 0.1,
+                 n.elit = 10,
+                 type.sel = "RW",
+                 type.co = "one.p",
+                 type.one.p.co = "II.quart",
+                 n.gen.conv = 150,
+                 plots="yes",
+                 verbose="yes")
+
+@
+
+The results of \Rfunction{GARS.GA}  are stored in a \Robject{list} object, herein \Robject{res\_GA}, which contains four slots:
+
+\begin{itemize}
+  \item{\textbf{data\_red} - a \Robject{matrix} containing the expression values for the selected features;}
+  \item{\textbf{last\_pop} - a \Robject{matrix} containing the chromosome population of the last generation. The first column of this matrix represent the best solution, found by the GA;}
+  \item{\textbf{pop\_list} - a \Robject{list} containing all the populations produced over the generations;}
+  \item{\textbf{fit\_list} - a \Robject{vector} containing the maximum fitness scores, computed in each generation.}
+\end{itemize}
+
+As mentioned before, in this example the number of chromosomes (100) and the number of generations (20) were intentionally small. Nevertheless, the population evolved over the generations: indeed, as shown in Figure~\ref{fig_fit}, the maximum fitness score is equal to 0.41 in the first generation and reaches the value of 0.55 in the last generation (an increasing of 30\%).
+Moreover, the Figure~\ref{fig_usa} shows the most recurring (i.e. ``conserved'') miRNAs over the iterations.
+
+\begin{figure}[!htbp]
+  \includegraphics{figure/chu_2-1}
+  \caption{Fitness Evolution plot. The plot shows the evolution of the maximum fitness across the generations}
+  \label{fig_fit}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[!htbp]
+  \includegraphics{figure/chu_2-2}
+  \caption{Recurring Features. Each circle in the plot represents a feature. The color and size of each circle are, respectively, darker and bigger when a feature is more recurring.}
+  \label{fig_usa}
+\end{figure}
+\FloatBarrier
+
+\newpage
+% subsection launch GARS
+\subsection{Test the robustness of the feature set} \label{cap2_1}
+Besides the maximum fitness score of the last population, we can assess the quality of the results, through a classification analysis. To perform this task, we used the functions implemented in the \Biocpkg{DaMiRseq} package, which offers several easy-to-use and efficient functions for Data Mining; however, the user may perform the analysis, exploiting other packages for data mining, such as the \CRANpkg{caret} package.\\
+First, we extracted data from the \Robject{res\_GA\$data\_red} object where the expression values for the selected features are stored. Then,we tranformed this matrix and the \Robject{classes\_GARS} in a \Robject{data.frame} object that we used as input for the \Rfunction{DaMiR.EnsembleLearning} function. We set \Robject{iter = 5} for practical reasons.
+
+<<chu_3, dev="pdf">>=
+
+# expression data of selected features
+data_reduced_GARS <- res_GA$data_red
+
+# Classification
+data_reduced_DaMiR <- as.data.frame(data_reduced_GARS)
+classes_DaMiR <- as.data.frame(colData(datanorm))
+colnames(classes_DaMiR) <- "class"
+rownames(classes_DaMiR) <- rownames(data_reduced_DaMiR)
+
+DaMiR.MDSplot(data_reduced_DaMiR,classes_DaMiR)
+DaMiR.Clustplot(data_reduced_DaMiR,classes_DaMiR)
+
+set.seed(12345)
+Classification.res <- DaMiR.EnsembleLearning(data_reduced_DaMiR,
+                                             classes_DaMiR$class,
+                                             iter=5)
+
+@
+
+The features selected by \gars{} allowed us to clearly discriminate the N and T classes (See Figures~\ref{fig_mds} and ~\ref{fig_clu}). Moreover, we obtained high classification accuracy for all the classifiers built using the features set (See Figure~\ref{fig_cla}).
+
+\begin{figure}[!htbp]
+  \includegraphics{figure/chu_3-1}
+  \caption{MultiDimensional Scaling plot. The MDS is drawn using the 8 features selected by \gars{}. The averaged Silhouette Index (i.e. the maximum fitness function of the last population) is equal to 0.55.}
+  \label{fig_mds}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[!htbp]
+  \includegraphics{figure/chu_3-2}
+  \caption{Clustergram. The clustergram is drawn using the 8 features selected by \gars{}.}
+  \label{fig_clu}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[!htbp]
+  \includegraphics{figure/chu_3-3}
+  \caption{Violin plot. The violin plot highlights the classification accuracy of each classifier. Using the features set, selected by \gars{}, the averaged classification accuracy is always high, dispite the small number of iterations.}
+  \label{fig_cla}
+\end{figure}
+\FloatBarrier
+
+\subsection{Find the best features set} \label{cap3_1}
+In the previous Section, we run \gars{} setting \Robject{chr.len = 8}. In this way, we forced the algorithm to find the best solution consisting of 8 features. However, this is probably not the best solution ever, but rather the optimal solution with 8 features. In order to find the best solution, we need to try several values of \Robject{chr.len}.\\
+A practical solution is to insert the  \Rfunction{GARS.GA} function inside a for loop. In the next example, we run \gars{} with \Robject{chr.len} equal to 7, 8 and 9.
+Finally, we search for the best solution.
+
+
+<<chu_4, dev="pdf">>=
+
+populs <- list()
+k=1
+for (ik in c(7,8,9)){
+  set.seed(1)
+  cat(ik, "features","\n")
+  populs[[k]] <- GARS.GA(data=datanorm,
+                        classes = colData(datanorm),
+                        chr.num = 100,
+                        chr.len = ik,
+                        generat = 20,
+                        co.rate = 0.8,
+                        mut.rate = 0.1,
+                        n.elit = 10,
+                        type.sel = "RW",
+                        type.co = "one.p",
+                        type.one.p.co = "II.quart",
+                        n.gen.conv = 150,
+                        plots = "no",
+                        verbose="no")
+
+  k <- k +1
+
+}
+
+# find the maximum fitness for each case
+max_fit <- 0
+
+for (i in seq_len(length(populs))){
+  max_fit[i] <- max(populs[[i]]$fit_list)
+}
+max_fit
+
+best_popul <- populs[[which(max_fit == max(max_fit))]]
+
+# number of features (best solution)
+dim(best_popul$data_red)[2]
+
+@
+
+Now, we can compare the results obtained from several \Robject{chr.len} values and select the best solution, looking at the maximum fitness scores and, eventually, applying the ``law of parsimony'' principle (\textit{Occam's razor}).
+
+\section{Session Info}
+<<sessInfo, results="asis", echo=FALSE>>=
+toLatex(sessionInfo())
+@
+
+\bibliography{library}
+
+\end{document}
+
