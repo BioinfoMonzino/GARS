@@ -14,14 +14,14 @@
 #' @examples
 #' # use example data:
 #' data(GARS_fit_list)
-#' GARS.PlotFitnessEvolution(GARS_fit_list)
+#' GARS_PlotFitnessEvolution(GARS_fit_list)
 #'
 #' @seealso
-#' \code{\link{GARS.PlotFeaturesUsage}}
+#' \code{\link{GARS_PlotFeaturesUsage}}
 #'
 #' @export
 #'
-GARS.PlotFitnessEvolution <- function(fitness.scores){
+GARS_PlotFitnessEvolution <- function(fitness.scores){
 
 
   if (missing(fitness.scores))

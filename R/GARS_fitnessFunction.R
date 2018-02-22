@@ -3,8 +3,17 @@
 #' @description In GARS the Fitness Function consists in calculating the
 #' Averaged Silhouette Index after a Multi-Dimensional Scaling
 #'
-#' @param data A matrix or a data.frame of the input data.
-#' Rows and Cols have to be, respectively, observations and features
+#' @param data A \code{SummarizedExperiment} object or a matrix or
+#'  a data.frame. In case of matrix or data.frame:
+#'  \itemize{
+#'   \item Rows and Cols have to be, respectively, observations
+#'   and features. The variables are tipically genes;
+#'   \item GARS also accept other -omic features as well as any
+#'   continuous or factorial variables
+#'   (e.g. sex, age, cholesterol level,...);
+#'   \item Usually the number of observation is << than the number
+#'   of features
+#'  }'
 #' @param classes A vector of type "factor" with \code{nrow(data)} elements.
 #'  Each element represents the class label for each observation.
 #' @param chr.pop A matrix or a data.frame representing the chromosomes
@@ -21,14 +30,14 @@
 #' data(GARS_data_norm)
 #' data(GARS_classes)
 #' data(GARS_popul)
-#' fitness_scores <- GARS.FitFun(GARS_data_norm, GARS_classes, GARS_popul)
+#' fitness_scores <- GARS_FitFun(GARS_data_norm, GARS_classes, GARS_popul)
 #'
 #' @seealso
-#' \code{\link{GARS.create.rnd.population}}
+#' \code{\link{GARS_create_rnd_population}}
 #'
 #' @export
 #'
-GARS.FitFun <- function(data, classes, chr.pop){
+GARS_FitFun <- function(data, classes, chr.pop){
 
   # check arguments
   if (missing(data))
@@ -37,8 +46,14 @@ GARS.FitFun <- function(data, classes, chr.pop){
     stop("'classes' argument must be provided")
   if (missing(chr.pop))
     stop("'chr.pop' argument must be provided")
-  if(!(is.matrix(data) | is.data.frame(data) ))
-    stop("'data' must be a matrix or a data.frame")
+  if(!(
+    is.matrix(data) | is.data.frame(data) | is(data, "SummarizedExperiment")
+  ))
+    stop("'data' must be a matrix, a data.frame or a SummarizedExperiment")
+  if(is(data, "SummarizedExperiment")){
+    data <- t(assay(data))
+    classes <- as.factor(classes$class)
+  }
   if(!(is.factor(classes)))
     stop("'classes' must be a factor")
   if(!(is.matrix(chr.pop) | is.data.frame(chr.pop) ))

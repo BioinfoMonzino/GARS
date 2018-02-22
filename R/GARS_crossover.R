@@ -22,19 +22,19 @@
 #'
 #' @examples
 #' data(GARS_popul)
-#' crossed_pop <- GARS.Crossover(GARS_popul, co.rate=0.9)
-#' crossed_pop <- GARS.Crossover(GARS_popul, type="two.p")
-#' crossed_pop <- GARS.Crossover(GARS_popul, type="one.p",
+#' crossed_pop <- GARS_Crossover(GARS_popul, co.rate=0.9)
+#' crossed_pop <- GARS_Crossover(GARS_popul, type="two.p")
+#' crossed_pop <- GARS_Crossover(GARS_popul, type="one.p",
 #' one.p.quart= "II.quart")
 #'
 #' @seealso
-#' \code{\link{GARS.Mutation}},
-#' \code{\link{GARS.Selection}},
-#' \code{\link{GARS.Elitism}},
+#' \code{\link{GARS_Mutation}},
+#' \code{\link{GARS_Selection}},
+#' \code{\link{GARS_Elitism}},
 #'
 #' @export
 #'
-GARS.Crossover <- function(chr.pop,
+GARS_Crossover <- function(chr.pop,
                            co.rate=0.8,
                            type=c("one.p","two.p"),
                            one.p.quart=c("I.quart",

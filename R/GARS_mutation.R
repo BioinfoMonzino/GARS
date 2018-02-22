@@ -22,17 +22,17 @@
 #' data(GARS_popul)
 #' data(GARS_data_norm)
 #'
-#' mutated_pop <- GARS.Mutation(GARS_popul, mut.rate=0.1,
+#' mutated_pop <- GARS_Mutation(GARS_popul, mut.rate=0.1,
 #'  dim(GARS_data_norm)[2])
 #'
 #' @seealso
-#' \code{\link{GARS.Elitism}},
-#' \code{\link{GARS.Selection}},
-#' \code{\link{GARS.Crossover}},
+#' \code{\link{GARS_Elitism}},
+#' \code{\link{GARS_Selection}},
+#' \code{\link{GARS_Crossover}},
 #'
 #' @export
 
-GARS.Mutation <- function(chr.pop,
+GARS_Mutation <- function(chr.pop,
                           mut.rate=0.01,
                           totFeats){
   # check arguments

@@ -25,17 +25,17 @@
 #' @examples
 #' data(GARS_popul)
 #' data(GARS_Fitness_score)
-#' pop_list <- GARS.Elitism(GARS_popul, GARS_Fitness_score)
+#' pop_list <- GARS_Elitism(GARS_popul, GARS_Fitness_score)
 #'
 #' @seealso
-#' \code{\link{GARS.Mutation}},
-#' \code{\link{GARS.Selection}},
-#' \code{\link{GARS.Crossover}},
-#' \code{\link{GARS.FitFun}},
+#' \code{\link{GARS_Mutation}},
+#' \code{\link{GARS_Selection}},
+#' \code{\link{GARS_Crossover}},
+#' \code{\link{GARS_FitFun}},
 #'
 #' @export
 #'
-GARS.Elitism <- function(chr.pop, fitn.values, n.elit=10){
+GARS_Elitism <- function(chr.pop, fitn.values, n.elit=10){
 
   # check arguments
   if (missing(chr.pop))

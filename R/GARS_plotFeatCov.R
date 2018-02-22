@@ -24,13 +24,13 @@
 #' data(GARS_data_norm)
 #' data(GARS_pop_list)
 #' allfeat_names <- colnames(GARS_data_norm)
-#' GARS.PlotFeaturesUsage(GARS_pop_list, allfeat_names, nFeat = 10)
+#' GARS_PlotFeaturesUsage(GARS_pop_list, allfeat_names, nFeat = 10)
 #' @seealso
-#' \code{\link{GARS.PlotFitnessEvolution}}
+#' \code{\link{GARS_PlotFitnessEvolution}}
 #'
 #' @export
 #'
-GARS.PlotFeaturesUsage <- function(popul.list,
+GARS_PlotFeaturesUsage <- function(popul.list,
                                    allFeat,
                                    nFeat = length(allFeat) ){
 

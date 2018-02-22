@@ -3,8 +3,17 @@
 #' @description This function creates the initial random population
 #' of chromosomes
 #'
-#' @param data A matrix or a data.frame of the input data.
-#' Rows and Cols have to be, respectively, observations and features
+#' @param data A \code{SummarizedExperiment} object or a matrix or
+#'  a data.frame. In case of matrix or data.frame:
+#'  \itemize{
+#'   \item Rows and Cols have to be, respectively, observations
+#'   and features. The variables are tipically genes;
+#'   \item GARS also accept other -omic features as well as any
+#'   continuous or factorial variables
+#'   (e.g. sex, age, cholesterol level,...);
+#'   \item Usually the number of observation is << than the number
+#'   of features
+#'  }'
 #' @param chr.num The number of chromosomes to generate. Default is
 #' 1000
 #' @param chr.len The length of chromosomes. This value corresponds
@@ -19,11 +28,11 @@
 #' @examples
 #' # use example data:
 #' data(GARS_data_norm)
-#' GARS.create.rnd.population(GARS_data_norm, chr.len=10, chr.num=100)
+#' GARS_create_rnd_population(GARS_data_norm, chr.len=10, chr.num=100)
 #'
 #' @export
 #'
-GARS.create.rnd.population <- function(data,
+GARS_create_rnd_population <- function(data,
                                        chr.len,
                                        chr.num=1000){
 
@@ -32,8 +41,9 @@ GARS.create.rnd.population <- function(data,
     stop("'data' argument must be provided")
   if (missing(chr.len))
       stop("'chr.len' argument must be provided")
-  if(!(is.matrix(data) | is.data.frame(data) ))
-    stop("'data' must be a matrix or a data.frame")
+  if(!(
+    is.matrix(data) | is.data.frame(data) | is(data, "SummarizedExperiment")
+  ))
   if(!(is.numeric(chr.num)))
     stop("'chr.num' must be numeric")
   if(!(is.numeric(chr.len)))
@@ -62,7 +72,9 @@ GARS.create.rnd.population <- function(data,
     warning("'chr.num' must be even. A chromosome will be added.")
     chr.num <- chr.num + 1
   }
-
+  if(is(data, "SummarizedExperiment")){
+    data <- t(assay(data))
+  }
   # body
   # create empty population
   chr_pop <- matrix(nrow=chr.len, ncol = chr.num)

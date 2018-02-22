@@ -5,8 +5,16 @@
 #' use GARS.
 #'
 #' @param data A \code{SummarizedExperiment} object or a matrix or
-#'  a data.frame. Rows and Cols have to be, respectively, observations
-#'   and features
+#'  a data.frame. In case of matrix or data.frame:
+#'  \itemize{
+#'   \item Rows and Cols have to be, respectively, observations
+#'   and features. The variables are tipically genes;
+#'   \item GARS also accept other -omic features as well as any
+#'   continuous or factorial variables
+#'   (e.g. sex, age, cholesterol level,...);
+#'   \item Usually the number of observation is << than the number
+#'   of features
+#'  }'
 #' @param classes The class vector
 #' @param chr.num The number of chromosomes to generate. Default is
 #' 1000
@@ -36,7 +44,7 @@
 #'  "yes" or "no" are allowed. Default is "yes"
 #'
 #'
-#' @return A list containg:
+#' @return A GarsSelectedFeatures object, containg:
 #' \describe{
 #'  \item{data_red}{a matrix of selected features}
 #'  \item{last_pop}{a matrix containg the last chromosome population}
@@ -53,7 +61,7 @@
 #' data(GARS_data_norm)
 #' data(GARS_classes)
 #'
-#' res_ex <- GARS.GA(GARS_data_norm,
+#' res_ex <- GARS_GA(GARS_data_norm,
 #'    GARS_classes,
 #'    chr.num = 100,
 #'    chr.len=10,
@@ -70,7 +78,7 @@
 #'
 #' @export
 #'
-GARS.GA <- function(data,
+GARS_GA <- function(data,
                      classes,
                      chr.num = 1000,
                      chr.len,
@@ -97,7 +105,7 @@ GARS.GA <- function(data,
   if(!(
     is.matrix(data) | is.data.frame(data) | is(data, "SummarizedExperiment")
     ))
-    stop("'data' must be a matrix or a data.frame")
+    stop("'data' must be a matrix, a data.frame or a SummarizedExperiment")
   if (missing(classes))
     stop("'classes' argument must be provided")
   if(!(is.numeric(chr.num)))
@@ -219,7 +227,7 @@ GARS.GA <- function(data,
   ## Start GA
   ###
   # create random population
-  rand_popul <- GARS.create.rnd.population(data,
+  rand_popul <- GARS_create_rnd_population(data,
                                            chr.num = chr.num,
                                            chr.len = chr.len)
   popul <- rand_popul
@@ -233,24 +241,24 @@ GARS.GA <- function(data,
         "\n")
 
     # Fitness Function
-    fitn_scores <- GARS.FitFun(data, classes, popul)
+    fitn_scores <- GARS_FitFun(data, classes, popul)
 
     # elitism
-    res.elit <- GARS.Elitism(popul, fitn_scores, n.elit)
+    res.elit <- GARS_Elitism(popul, fitn_scores, n.elit)
 
     # Round selection
-    chr_pop_selected <- GARS.Selection(res.elit$chr.pop.non.elit,
+    chr_pop_selected <- GARS_Selection(res.elit$chr.pop.non.elit,
                                        type.sel,
                                        res.elit$fitn.sort.non.elit)
 
     # cross-over
-    chr_pop_crossed <- GARS.Crossover(chr_pop_selected,
+    chr_pop_crossed <- GARS_Crossover(chr_pop_selected,
                                       co.rate,
                                       type.co,
                                       type.one.p.co)
 
     # mutation
-    chr_pop_mutated <- GARS.Mutation(chr_pop_crossed,
+    chr_pop_mutated <- GARS_Mutation(chr_pop_crossed,
                                      mut.rate,dim(data)[2])
 
     popul <- cbind(res.elit$chr.pop.elit, chr_pop_mutated)
@@ -293,16 +301,20 @@ GARS.GA <- function(data,
   # plots
   if (plots %in% "yes"){
     #dev.new()
-    GARS.PlotFitnessEvolution(fit_list)
+    GARS_PlotFitnessEvolution(fit_list)
     gene_selected <- colnames(data)
     #dev.new()
-    GARS.PlotFeaturesUsage(pop_list, gene_selected,
+    GARS_PlotFeaturesUsage(pop_list, gene_selected,
                               nFeat = n.Feat_plot)
   }
 
+  res_GA <- new("GarsSelectedFeatures",
+                data_red = best_chr,
+                last_pop = popul,
+                pop_list = pop_list,
+                fit_list = fit_list)
+
+
   # export useful data
-  return(list(data_red = best_chr,
-              last_pop = popul,
-              pop_list = pop_list,
-              fit_list = fit_list))
+  return(res_GA)
 }

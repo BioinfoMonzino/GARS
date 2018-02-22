@@ -68,3 +68,12 @@
 #' An example data for testing \code{GARS} package
 "GARS_pop_list"
 
+#' A GarsSelectedFeatures object for testing GARS
+#'
+#' An object representing the output of GARS_GA
+#'
+#' @format A GarsSelectedFeatures
+#'
+#' @return
+#' An example data for testing \code{GARS} package
+"GARS_res_GA"

@@ -115,7 +115,8 @@ rownames(cervical) <- gsub("*", "x", rownames(cervical), fixed = TRUE)
 rownames(cervical) <- gsub("-", "_", rownames(cervical), fixed = TRUE)
 
 # create the "class" vector
-class_vector <- data.frame(class = factor(rep(c("N","T"), c(29,29))))
+class_vector <- data.frame(gsub('[0-9]+', '', colnames(cervical)))
+colnames(class_vector) <- "class"
 rownames(class_vector) <- colnames(cervical)
 
 # create a Summarized Experiment object
@@ -128,8 +129,8 @@ datanorm <- DaMiR.normalization(SE_obj)
 
 
 \subsection{Launch GARS} \label{cap_launch_wrap}
-After filtering and normalizing data we got a dataset with 157 expressed miRNAs and 58 samples.
-The best way to use \gars{} for selecting a robust set of features from an high-dimentional dataset is to exploit the wrapper function \Rfunction{GARS.GA}.
+After filtering and normalizing data we got a dataset with 161 expressed miRNAs and 58 samples.
+The best way to use \gars{} for selecting a robust set of features from an high-dimentional dataset is to exploit the wrapper function \Rfunction{GARS\_GA}.
 A dataset must be provided, as well as a vector containing the class information. \gars{} gives the opportunity to provide input data in the form of \Robject{SummarizedExperiment}, \Robject{matrix} or \Robject{data.frame} objects. On one hand, \Robject{SummarizedExperiment} is preferred in the case of a RNA-Seq experiment; on the other hand, a \Robject{data.frame} allows the user to integrate expression data with other numerical and/or categorical features.
 
 In addition, several other parameters have to be set:
@@ -147,7 +148,7 @@ In addition, several other parameters have to be set:
   \item{\Robject{n.gen.conv} - The maximum number of consecutive generations with the same maximum fitness score. When the maximum fitness scores are the same for several generation, this means that the GA found the optimal solution (i.e. reached the convergence). This argument is useful to stop \gars{} when the convergence is reached. Default: 80. }
   \item{\Robject{plots} - Whether generating plots or not. Default: yes.}
   \item{\Robject{verbose} - Whether printing information in the console or not. Default: yes.}
-  \item{\Robject{n.Feat\_plot} - If \Robject{plots = yes}, the number of features to be plotted by \Rfunction{GARS.PlotFeaturesUsage}}
+  \item{\Robject{n.Feat\_plot} - If \Robject{plots = yes}, the number of features to be plotted by \Rfunction{GARS\_PlotFeaturesUsage}}
 
 \end{itemize}
 
@@ -156,7 +157,7 @@ To speed up the execution time of the function, here we set \Robject{generat = 2
 
 <<chu_2, dev="pdf">>=
 set.seed(123)
-res_GA <- GARS.GA(data=datanorm,
+res_GA <- GARS_GA(data=datanorm,
                  classes = colData(datanorm),
                  chr.num = 100,
                  chr.len = 8,
@@ -173,13 +174,13 @@ res_GA <- GARS.GA(data=datanorm,
 
 @
 
-The results of \Rfunction{GARS.GA}  are stored in a \Robject{list} object, herein \Robject{res\_GA}, which contains four slots:
+The results of \Rfunction{GARS\_GA} are stored in a \Robject{GarsSelectedFeatures} object, herein \Robject{res\_GA}, where the informations could be extracted by 4 Assessor methods:
 
 \begin{itemize}
-  \item{\textbf{data\_red} - a \Robject{matrix} containing the expression values for the selected features;}
-  \item{\textbf{last\_pop} - a \Robject{matrix} containing the chromosome population of the last generation. The first column of this matrix represent the best solution, found by the GA;}
-  \item{\textbf{pop\_list} - a \Robject{list} containing all the populations produced over the generations;}
-  \item{\textbf{fit\_list} - a \Robject{vector} containing the maximum fitness scores, computed in each generation.}
+  \item{\Rfunction{MatrixFeatures()} - Extracts the \Robject{matrix} containing the expression values for the selected features;}
+  \item{\Rfunction{LastPop()} - Extracts the  \Robject{matrix} containing the chromosome population of the last generation. The first column of this matrix represent the best solution, found by the GA;}
+  \item{\Rfunction{AllPop()} - Extracts the  \Robject{list} containing all the populations produced over the generations;}
+  \item{\Rfunction{FitScore()} - Extracts the \Robject{vector} containing the maximum fitness scores, computed in each generation.}
 \end{itemize}
 
 As mentioned before, in this example the number of chromosomes (100) and the number of generations (20) were intentionally small. Nevertheless, the population evolved over the generations: indeed, as shown in Figure~\ref{fig_fit}, the maximum fitness score is equal to 0.41 in the first generation and reaches the value of 0.55 in the last generation (an increasing of 30\%).
@@ -203,12 +204,12 @@ Moreover, the Figure~\ref{fig_usa} shows the most recurring (i.e. ``conserved'')
 % subsection launch GARS
 \subsection{Test the robustness of the feature set} \label{cap2_1}
 Besides the maximum fitness score of the last population, we can assess the quality of the results, through a classification analysis. To perform this task, we used the functions implemented in the \Biocpkg{DaMiRseq} package, which offers several easy-to-use and efficient functions for Data Mining; however, the user may perform the analysis, exploiting other packages for data mining, such as the \CRANpkg{caret} package.\\
-First, we extracted data from the \Robject{res\_GA\$data\_red} object where the expression values for the selected features are stored. Then,we tranformed this matrix and the \Robject{classes\_GARS} in a \Robject{data.frame} object that we used as input for the \Rfunction{DaMiR.EnsembleLearning} function. We set \Robject{iter = 5} for practical reasons.
+First, we extracted data from the \Robject{MatrixFeatures(res\_GA)} object where the expression values for the selected features are stored. Then,we tranformed this matrix and the \Robject{classes\_GARS} in a \Robject{data.frame} object that we used as input for the \Rfunction{DaMiR.EnsembleLearning} function. We set \Robject{iter = 5} for practical reasons.
 
 <<chu_3, dev="pdf">>=
 
 # expression data of selected features
-data_reduced_GARS <- res_GA$data_red
+data_reduced_GARS <- MatrixFeatures(res_GA)
 
 # Classification
 data_reduced_DaMiR <- as.data.frame(data_reduced_GARS)
@@ -251,7 +252,7 @@ The features selected by \gars{} allowed us to clearly discriminate the N and T 
 
 \subsection{Find the best features set} \label{cap3_1}
 In the previous Section, we run \gars{} setting \Robject{chr.len = 8}. In this way, we forced the algorithm to find the best solution consisting of 8 features. However, this is probably not the best solution ever, but rather the optimal solution with 8 features. In order to find the best solution, we need to try several values of \Robject{chr.len}.\\
-A practical solution is to insert the  \Rfunction{GARS.GA} function inside a for loop. In the next example, we run \gars{} with \Robject{chr.len} equal to 7, 8 and 9.
+A practical solution is to insert the  \Rfunction{GARS\_GA} function inside a for loop. In the next example, we run \gars{} with \Robject{chr.len} equal to 7, 8 and 9.
 Finally, we search for the best solution.
 
 
@@ -262,7 +263,7 @@ k=1
 for (ik in c(7,8,9)){
   set.seed(1)
   cat(ik, "features","\n")
-  populs[[k]] <- GARS.GA(data=datanorm,
+  populs[[k]] <- GARS_GA(data=datanorm,
                         classes = colData(datanorm),
                         chr.num = 100,
                         chr.len = ik,
@@ -285,18 +286,35 @@ for (ik in c(7,8,9)){
 max_fit <- 0
 
 for (i in seq_len(length(populs))){
-  max_fit[i] <- max(populs[[i]]$fit_list)
+  max_fit[i] <- max(FitScore(populs[[i]]))
 }
 max_fit
 
 best_popul <- populs[[which(max_fit == max(max_fit))]]
 
 # number of features (best solution)
-dim(best_popul$data_red)[2]
+dim(MatrixFeatures(best_popul))[2]
 
 @
 
 Now, we can compare the results obtained from several \Robject{chr.len} values and select the best solution, looking at the maximum fitness scores and, eventually, applying the ``law of parsimony'' principle (\textit{Occam's razor}).
+
+\newpage
+\section{Build your custom GA} \label{cap_new}
+As mentioned in Section~\ref{cap_wf}, the best way to use \gars{} is to run the \Rfunction{GARS\_GA} function. However, the \gars{} package allows the user to build a custom GA (e.g. avoiding the Crossover step), joining the functions embedded in \Rfunction{GARS\_GA}:
+
+\begin{itemize}
+  \item{\Rfunction{GARS\_create\_rnd\_population()} - allows creating a random chromosome population;}
+  \item{\Rfunction{GARS\_FitFun()} - allows computing the fitness function, given a chromosome population;}
+  \item{\Rfunction{GARS\_Elitism()} - allows splitting a chromosome population, ordered by fitness scores;}
+  \item{\Rfunction{GARS\_Selection()} - allows selecting the best chromosomes, given a chromosome population;}
+  \item{\Rfunction{GARS\_Crossover()} - allows performing the Crossover step;}
+  \item{\Rfunction{GARS\_Mutation()} - allows performing the Mutation step;}
+  \item{\Rfunction{GARS\_PlotFitnessEvolution()} - allows plotting the evolution of the maximum fitness over the generations;}
+  \item{\Rfunction{GARS\_PlotFeaturesUsage()} - allows plotting how many times a feature is present over the generations;}
+\end{itemize}
+
+
 
 \section{Session Info}
 <<sessInfo, results="asis", echo=FALSE>>=

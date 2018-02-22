@@ -20,16 +20,16 @@
 #' # use example data:
 #' data(GARS_popul)
 #' data(GARS_Fitness_score)
-#' selected_pop <- GARS.Selection(GARS_popul, "RW", GARS_Fitness_score)
+#' selected_pop <- GARS_Selection(GARS_popul, "RW", GARS_Fitness_score)
 #'
 #' @seealso
-#' \code{\link{GARS.Mutation}},
-#' \code{\link{GARS.Crossover}},
-#' \code{\link{GARS.Elitism}},
+#' \code{\link{GARS_Mutation}},
+#' \code{\link{GARS_Crossover}},
+#' \code{\link{GARS_Elitism}},
 #'
 #' @export
 #'
-GARS.Selection <- function(chr.pop, type = c("RW","TS"), fitn.values){
+GARS_Selection <- function(chr.pop, type = c("RW","TS"), fitn.values){
 
   # check arguments
   if (missing(chr.pop))
