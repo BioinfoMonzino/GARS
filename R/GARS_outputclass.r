@@ -2,7 +2,7 @@
 #'
 #' The output class for GARS_GA function
 #'
-#' @name GarsSelectedFeatures class
+#' @name GarsSelectedFeatures-class
 #' @rdname GarsSelectedFeatures-class
 #' @docType class
 #' @slot data_red a matrix containing the expression
@@ -14,7 +14,7 @@
 #' @slot fit_list a vector containing the maximum fitness scores
 #' @examples
 #' showClass("GarsSelectedFeatures")
-#' @exportClass
+#' @exportClass GarsSelectedFeatures
 
 setClass("GarsSelectedFeatures",
          slots = list(data_red = "matrix",

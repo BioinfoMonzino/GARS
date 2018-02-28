@@ -3,7 +3,7 @@
 \docType{methods}
 \name{LastPop}
 \alias{LastPop}
-\alias{LastPop methods}
+\alias{LastPop,GarsSelectedFeatures-method}
 \alias{LastPop}
 \alias{LastPop,GARS-LastPop}
 \title{Accessors for the 'LastPop' slot of a GarsSelectedFeatures object.}

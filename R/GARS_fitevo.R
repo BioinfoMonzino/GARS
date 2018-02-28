@@ -40,6 +40,8 @@ GARS_PlotFitnessEvolution <- function(fitness.scores){
                                  fitness.scores))
   colnames(df_plot) <- c("V1","fit_list")
 
+  V1 <- fit_list <- NULL
+
   #plot
   p <- ggplot(aes(x = V1, y = fit_list), data = df_plot) +
     geom_point(color="salmon1") +

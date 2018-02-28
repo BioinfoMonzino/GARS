@@ -3,7 +3,6 @@
 #' @description The MatrixFeatures slot contains the reduced dataset
 #'
 #' @docType methods
-#' @name MatrixFeatures methods
 #' @rdname MatrixFeatures
 #' @aliases MatrixFeatures MatrixFeatures,GARS-MatrixFeatures
 #' @param x a \code{GarsSelectedFeatures} object
@@ -14,7 +13,7 @@
 #' @examples
 #' data(GARS_res_GA)
 #' ex_matrix <- MatrixFeatures(GARS_res_GA)
-#' @exportMethod
+#' @export
 setMethod("MatrixFeatures",
           c(x = "GarsSelectedFeatures"),
           function(x){
@@ -28,7 +27,6 @@ setMethod("MatrixFeatures",
 #' @description The LastPop slot contains the last chromosome population
 #'
 #' @docType methods
-#' @name LastPop methods
 #' @rdname LastPop
 #' @aliases LastPop LastPop,GARS-LastPop
 #' @param x a \code{GarsSelectedFeatures} object
@@ -37,7 +35,7 @@ setMethod("MatrixFeatures",
 #' @examples
 #' data(GARS_res_GA)
 #' ex_pop <- LastPop(GARS_res_GA)
-#' @exportMethod
+#' @export
 setMethod("LastPop",
           c(x = "GarsSelectedFeatures"),
           function(x){
@@ -51,7 +49,6 @@ setMethod("LastPop",
 #' @description The AllPop slot contains the list of populations
 #'
 #' @docType methods
-#' @name AllPop methods
 #' @rdname AllPop
 #' @aliases AllPop AllPop,GARS-AllPop
 #' @param x a \code{GarsSelectedFeatures} object
@@ -60,7 +57,7 @@ setMethod("LastPop",
 #' @examples
 #' data(GARS_res_GA)
 #' ex_pop <- AllPop(GARS_res_GA)
-#' @exportMethod
+#' @export
 setMethod("AllPop",
           c(x = "GarsSelectedFeatures"),
           function(x){
@@ -73,7 +70,6 @@ setMethod("AllPop",
 #' @description The FitScore slot contains the fitness values over the generations
 #'
 #' @docType methods
-#' @name FitScore methods
 #' @rdname FitScore
 #' @aliases FitScore FitScore,GARS-FitScore
 #' @param x a \code{GarsSelectedFeatures} object
@@ -82,7 +78,7 @@ setMethod("AllPop",
 #' @examples
 #' data(GARS_res_GA)
 #' ex_pop <- FitScore(GARS_res_GA)
-#' @exportMethod
+#' @export
 
 setMethod("FitScore",
           c(x = "GarsSelectedFeatures"),

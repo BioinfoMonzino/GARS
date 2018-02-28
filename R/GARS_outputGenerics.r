@@ -1,20 +1,20 @@
 #' @rdname MatrixFeatures
-#' @exportMethod
+#' @export
 setGeneric("MatrixFeatures", function(x){
     standardGeneric("MatrixFeatures")
 })
 #' @rdname LastPop
-#' @exportMethod
+#' @export
 setGeneric("LastPop", function(x){
     standardGeneric("LastPop")
 })
 #' @rdname AllPop
-#' @exportMethod
+#' @export
 setGeneric("AllPop", function(x){
     standardGeneric("AllPop")
 })
 #' @rdname FitScore
-#' @exportMethod
+#' @export
 setGeneric("FitScore", function(x){
     standardGeneric("FitScore")
 })

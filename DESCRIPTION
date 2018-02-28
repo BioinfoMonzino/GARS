@@ -1,10 +1,10 @@
 Package: GARS
 Type: Package
-Date: 2018-02-22
+Date: 2018-02-28
 Title: GARS: a clustering-based Genetic Algorithm for the identification
  of Robust Subsets of variables in high-dimensional and challenging
  datasets
-Version: 0.99.2
+Version: 0.99.3
 Author: Mattia Chiesa <mattia.chiesa@hotmail.it>, 
     Luca Piacentini <luca.piacentini@cardiologicomonzino.it>
 Maintainer: Mattia Chiesa <mattia.chiesa@hotmail.it>
@@ -25,7 +25,7 @@ Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
-biocViews: Classification, FeatureExtraction
-Imports: DaMiRseq, MLSeq, stats, methods
+biocViews: Classification, FeatureExtraction, Clustering
+Imports: DaMiRseq, MLSeq, stats, methods, SummarizedExperiment
 Suggests: BiocStyle, knitr, testthat
 Depends: R (>= 3.5), ggplot2, cluster

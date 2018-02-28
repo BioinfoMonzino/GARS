@@ -58,6 +58,7 @@ GARS_PlotFeaturesUsage <- function(popul.list,
   rownames(feat_Cov) <- feat_Cov$pop_unlist
   feats_name <- allFeat[as.numeric(rownames(feat_Cov))]
   rownames(feat_Cov) <- feats_name
+  Times <- Feature <- NULL
 
   # subset features for plotting
   feat_Cov2 <- feat_Cov[order(-feat_Cov$Freq),][seq_len(nFeat),]
