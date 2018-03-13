@@ -169,7 +169,7 @@ res_GA <- GARS_GA(data=datanorm,
                  type.co = "one.p",
                  type.one.p.co = "II.quart",
                  n.gen.conv = 150,
-                 plots="yes",
+                 plots="no",
                  verbose="yes")
 
 @
@@ -183,18 +183,34 @@ The results of \Rfunction{GARS\_GA} are stored in a \Robject{GarsSelectedFeature
   \item{\Rfunction{FitScore()} - Extracts the \Robject{vector} containing the maximum fitness scores, computed in each generation.}
 \end{itemize}
 
+The information stored in the \Robject{GarsSelectedFeatures} object could be used for downstream analysis (See Section~\ref{cap2_1}) or for generating plots (before, we set \Robject{plots = no}). In \gars{} the functions \Rfunction{GARS\_PlotFitnessEvolution()} allows the user to plot the fitness evolution over the generations, while the function \Rfunction{GARS\_PlotFeaturesUsage()} allows representing the frequency of each feature in a bubble chart:
+
+<<chu_2_bis, dev="pdf">>=
+# Plot Fitness Evolution
+fitness_scores <- FitScore(res_GA)
+GARS_PlotFitnessEvolution(fitness_scores)
+
+#Plot the frequency of each features over the generations
+Allfeat_names <- rownames(datanorm)
+Allpopulations <- AllPop(res_GA)
+GARS_PlotFeaturesUsage(Allpopulations,
+                       Allfeat_names,
+                       nFeat = 10)
+
+@
+
 As mentioned before, in this example the number of chromosomes (100) and the number of generations (20) were intentionally small. Nevertheless, the population evolved over the generations: indeed, as shown in Figure~\ref{fig_fit}, the maximum fitness score is equal to 0.41 in the first generation and reaches the value of 0.55 in the last generation (an increasing of 30\%).
 Moreover, the Figure~\ref{fig_usa} shows the most recurring (i.e. ``conserved'') miRNAs over the iterations.
 
 \begin{figure}[!htbp]
-  \includegraphics{figure/chu_2-1}
+  \includegraphics{figure/chu_2_bis-1}
   \caption{Fitness Evolution plot. The plot shows the evolution of the maximum fitness across the generations}
   \label{fig_fit}
 \end{figure}
 \FloatBarrier
 
 \begin{figure}[!htbp]
-  \includegraphics{figure/chu_2-2}
+  \includegraphics{figure/chu_2_bis-2}
   \caption{Recurring Features. Each circle in the plot represents a feature. The color and size of each circle are, respectively, darker and bigger when a feature is more recurring.}
   \label{fig_usa}
 \end{figure}
