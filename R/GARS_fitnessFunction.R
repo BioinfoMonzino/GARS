@@ -51,8 +51,15 @@ GARS_FitFun <- function(data, classes, chr.pop){
   ))
     stop("'data' must be a matrix, a data.frame or a SummarizedExperiment")
   if(is(data, "SummarizedExperiment")){
+    idx_class <- which(colnames(colData(data)) %in% "class")
+    if (length(idx_class) == 0){
+      warning("'class' label not defined in colData(data). colData(data)[1] was used as 'class'")
+      classes <- colData(data)[1][,1]
+    }else{
+      classes <- as.factor(classes$class)
+    }
     data <- t(assay(data))
-    classes <- as.factor(classes$class)
+
   }
   if(!(is.factor(classes)))
     stop("'classes' must be a factor")

@@ -154,8 +154,15 @@ GARS_GA <- function(data,
   if (!(verbose %in% "yes" | verbose %in% "no"))
     stop("'verbose' must be 'yes' or 'no'")
   if(is(data, "SummarizedExperiment")){
+    idx_class <- which(colnames(colData(data)) %in% "class")
+    if (length(idx_class) == 0){
+      warning("'class' label not defined in colData(data). colData(data)[1] was used as 'class'")
+      classes <- colData(data)[1][,1]
+    }else{
+      classes <- as.factor(classes$class)
+      }
     data <- t(assay(data))
-    classes <- as.factor(classes$class)
+
   }
   if(!(is.factor(classes)))
     stop("'classes' must be a factor")
@@ -236,7 +243,7 @@ GARS_GA <- function(data,
 
   # launch GA
   for (j in seq_len(generation)){
-    if (j %% 10 ==0)
+    if (j %% 10 == 0)
     cat("Reached", j, "iterations...",
         "\n")
 
@@ -308,6 +315,7 @@ GARS_GA <- function(data,
                               nFeat = n.Feat_plot)
   }
 
+  best_chr <- as.matrix(best_chr)
   res_GA <- new("GarsSelectedFeatures",
                 data_red = best_chr,
                 last_pop = popul,
