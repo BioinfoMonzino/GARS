@@ -50,7 +50,7 @@ opts_chunk$set(
 \affil[1]{Immunology and Functional Genomics Unit, Centro Cardiologico Monzino, IRCCS, Milan, Italy;}
 \affil[2]{Universit\'a degli Studi di Pavia, Pavia, Italy}
 
-\title{GARS: a clustering-based Genetic Algorithm for the identification of Robust Subsets of variables in high-dimensional and challenging datasets}
+\title{GARS: a  Genetic Algorithm for the identification of Robust Subsets of variables in high-dimensional and challenging datasets}
 
 \begin{document}
 
@@ -59,7 +59,7 @@ opts_chunk$set(
 \begin{abstract}
 Feature selection aims to identify and, remove redundant, irrelevant and noisy variables from high-dimensional datasets. Selecting informative features affects the subsequent classification and regression analyses by improving their overall performances. Several methods have been proposed to perform feature selection: most of them relies on univariate statistics, correlation, entropy measurements or the usage of backward/forward regressions.\\
 Herein, we propose an efficient, robust and fast method that adopts stochastic optimization approaches for high-dimensional. Genetic algorithms, a type of evolutionary algorithms, are often used to find solutions for optimization and search problems and promise to be effective on complex data. They operate on a population of potential solutions and apply the ``principle of survival of the fittest'' to produce the better approximation of the optimal solution.\\
-GARS is an innovative implementation of a clustering-based genetic algorithm that selects robust features in high-dimensional and challenging datasets.
+GARS is an innovative implementation of a genetic algorithm that selects robust features in high-dimensional and challenging datasets.
 \end{abstract}
 
 \packageVersion{\Sexpr{BiocStyle::pkg_ver("GARS")}}
@@ -86,7 +86,7 @@ A crucial step in a Data Mining analysis is Feature Selection, which is the proc
 Genetic Algorithms (GAs) are heuristic adaptive search algorithms that simulate the Darwinian law of ``the survival of the fittest'' among individuals, over consecutive generations, for solving hard problems, such as pattern recognition and feature selection. A GA is traditionally composed of three main consecutive stages: first, a random set of candidate solutions, \textit{i.e.} chromosomes, is generated. Then, each chromosome is evaluated by a custom score, \textit{i.e. fitness function} that reflects how good a solution is. Finally, the evolutionary operators are sequentially applied to the entire population: \textit{Selection}, \textit{Crossover} and \textit{Mutation}. To find the optimal solution, this process has to be repeated several times: the starting chromosome population of a certain generation corresponds to the resulting chromosome population of the previous generation.\\
 The idea to use a GA to perform Feature Selection is not novel; however, all the developed GA-based methods needs a classifier to evaluate the goodness of a set of features (namely, they belong to the ``Wrapper'' or the ``Embedded'' category).  The classifiers mainly used to assess the selected features are the Support Vector Machines (GA-SVN) \cite{mohamad2005hybrid},  the k-Nearest Neighbours (GA-KNN) \cite{li2001gene}, the Random Forest (rfGA, see the \CRANpkg{caret} package for details), the LDA (caretGA, see the \CRANpkg{caret} package for details) \cite{kuhn2008caret} and maximum-likelihood based methods (GA-MLHD) \cite{ooi2003genetic}.\\
 One of the most relevant contexts where the feature selection is becoming more and more essential, is the \textit{-OMICs} field: in fact, datasets coming from genomics, transcriptomics, proteomics and metabolomics experiments are typically composed of a large number of features compared to the sample size; this poses a big challenge for a data mining analysis.\\
-In this context, we developed an innovative implementation of a clustering-based \textbf{G}enetic \textbf{A}lgorithm that selects  \textbf{R}obust \textbf{S}ubsets of features (\textbf{GARS}) in high-dimensional and challenging datasets. GARS has several benefits:
+In this context, we developed an innovative implementation of a \textbf{G}enetic \textbf{A}lgorithm that selects  \textbf{R}obust \textbf{S}ubsets of features (\textbf{GARS}) in high-dimensional and challenging datasets. GARS has several benefits:
 \begin{enumerate}
   \item it does not need any classifier to evaluate the goodness of the selected feature. The fitness is calculated by the averaged Silhouette Index \cite{rousseeuw1987silhouettes}, after computing a Multi-Dimensional Scaling of the data. This allows being less prone to overfitting and local optima;
   \item it is relatively fast, when the number of features is relatively high (tens of thousands);

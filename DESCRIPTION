@@ -1,10 +1,10 @@
 Package: GARS
 Type: Package
 Date: 2018-03-26
-Title: GARS: a clustering-based Genetic Algorithm for the identification
+Title: GARS: Genetic Algorithm for the identification
  of Robust Subsets of variables in high-dimensional and challenging
  datasets
-Version: 0.99.6
+Version: 0.99.7
 Author: Mattia Chiesa <mattia.chiesa@hotmail.it>, 
     Luca Piacentini <luca.piacentini@cardiologicomonzino.it>
 Maintainer: Mattia Chiesa <mattia.chiesa@hotmail.it>
@@ -17,7 +17,7 @@ Description: Feature selection aims to identify and remove redundant,
     correlation, entropy measurements or the usage of backward/forward
     regressions. Herein, we propose an efficient, robust and fast method
     that adopts stochastic optimization approaches for high-dimensional.
-    GARS is an innovative implementation of a clustering-based genetic 
+    GARS is an innovative implementation of a  genetic 
     algorithm that selects robust features in high-dimensional and
     challenging datasets.
 License: GPL (>= 2)
