@@ -111,6 +111,7 @@ GARS_FitFun <- function(data, classes, chr.pop){
 
   mean_SI <-0
   mean_SI <- apply(chr.pop, 2, myFitFun, data=data, classes=classes)
+  mean_SI[which(mean_SI < 0)] <- 0
 
   return(mean_SI)
 

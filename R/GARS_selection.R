@@ -73,6 +73,7 @@ GARS_Selection <- function(chr.pop, type = c("RW","TS"), fitn.values){
   if(type == "RW"){
     # Roulette Wheel
     fitn.sort <- fitn.values[order(fitn.values, decreasing = TRUE)]
+    fitn.sort[which(fitn.sort < 0)] <- 0
     cumul.sum <- 1/cumsum(fitn.sort)
     cumul.sum.norm <- cumul.sum/sum(cumul.sum)
 
