@@ -19,6 +19,9 @@
 <<style-knitr, eval=TRUE, echo=FALSE, results="asis">>=
 BiocStyle::latex(relative.path = TRUE)
 @
+
+\usepackage[utf8]{inputenc}
+
 \usepackage{subfig}% for combining multiple plots in one figure
 \usepackage[section]{placeins}
 \usepackage{amsmath}
@@ -94,6 +97,11 @@ In this context, we developed an innovative implementation of a \textbf{G}enetic
   \item even though it has been thought for solving \textit{-OMICs} tasks, it can be easily used in several other contexts (e.g. low-dimensional data);
   \item it can be easily integrated with other R and Bioconductor packages for Data Mining (e.g. \CRANpkg{caret} and \Biocpkg{DaMiRseq}).
 \end{enumerate}
+
+\subsection{Citation and code}
+Users can find useful details about the GARS algorithm, \href{https://doi.org/10.1186/s12859-020-3400-6}{downloading the publication} \footnote{See: \textit{Chiesa et al. GARS: Genetic Algorithm for the identification of a Robust Subset of features in high-dimensional datasets} \cite{chiesa2020gars}. }. This paper should be used to cite GARS, as well.\\
+In addition, we provided in GitHub the code of all the analyses performed for the publication: \href{https://github.com/BioinfoMonzino/GARS_paper_Code}{https://github.com/BioinfoMonzino/GARS\_paper\_Code}. Users are invited to download and customize the proposed  workflows in which GARS is used to perform feature selection in three different machine learning analyses.
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -238,7 +246,7 @@ DaMiR.Clustplot(data_reduced_DaMiR,classes_DaMiR)
 
 set.seed(12345)
 Classification.res <- DaMiR.EnsembleLearning(data_reduced_DaMiR,
-                                             classes_DaMiR$class,
+                                             as.factor(classes_DaMiR$class),
                                              iter=5)
 
 @
