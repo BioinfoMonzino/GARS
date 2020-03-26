@@ -1,0 +1,18 @@
+citEntry(entry="article",
+         title = "GARS: Genetic Algorithm for the identification 
+		 of a Robust Subset of features in high-dimensional datasets",
+         author = personList( as.person("Mattia Chiesa"),
+							  as.person("Giada Maioli"),
+                              as.person("Gualtiero I. Colombo"),
+                              as.person("Luca Piacentini")),
+         journal = "BMC bioinformatics",
+         volume = "21",
+         number = "1",
+         pages = "54",
+         year = "2020",
+         doi = "10.1186/s12859-020-3400-6",
+         textVersion =
+         paste("Mattia Chiesa, Giada Maioli, Gualtiero I. Colombo and Luca Piacentini.",
+               "GARS: Genetic Algorithm for the identification of a Robust Subset of features in high-dimensional datasets",
+                "BMC bioinformatics, (2020)., https://doi.org/10.1186/s12859-020-3400-6" ) )
+				
