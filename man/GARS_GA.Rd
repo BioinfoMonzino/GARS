@@ -5,10 +5,10 @@
 \title{The wrapper fuction to use GARS}
 \usage{
 GARS_GA(data, classes, chr.num = 1000, chr.len, generation = 500,
-  co.rate = 0.8, mut.rate = 0.01, n.elit = 10, type.sel = c("RW", "TS"),
-  type.co = c("one.p", "two.p"), type.one.p.co = c("I.quart", "II.quart",
-  "III.quart"), n.gen.conv = 80, plots = c("yes", "no"), n.Feat_plot = 10,
-  verbose = c("yes", "no"))
+  co.rate = 0.8, mut.rate = 0.01, n.elit = 10, type.sel = c("RW",
+  "TS"), type.co = c("one.p", "two.p"), type.one.p.co = c("I.quart",
+  "II.quart", "III.quart"), n.gen.conv = 80, plots = c("yes", "no"),
+  n.Feat_plot = 10, verbose = c("yes", "no"))
 }
 \arguments{
 \item{data}{A \code{SummarizedExperiment} object or a matrix or

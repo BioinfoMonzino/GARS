@@ -4,7 +4,6 @@
 \name{FitScore}
 \alias{FitScore}
 \alias{FitScore,GarsSelectedFeatures-method}
-\alias{FitScore}
 \alias{FitScore,GARS-FitScore}
 \title{Accessors for the 'FitScore' slot of a GarsSelectedFeatures object.}
 \usage{

@@ -4,7 +4,6 @@
 \name{AllPop}
 \alias{AllPop}
 \alias{AllPop,GarsSelectedFeatures-method}
-\alias{AllPop}
 \alias{AllPop,GARS-AllPop}
 \title{Accessors for the 'AllPop' slot of a GarsSelectedFeatures object.}
 \usage{

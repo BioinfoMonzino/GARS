@@ -4,7 +4,6 @@
 \name{MatrixFeatures}
 \alias{MatrixFeatures}
 \alias{MatrixFeatures,GarsSelectedFeatures-method}
-\alias{MatrixFeatures}
 \alias{MatrixFeatures,GARS-MatrixFeatures}
 \title{Accessors for the 'MatrixFeatures' slot of a GarsSelectedFeatures object.}
 \usage{
