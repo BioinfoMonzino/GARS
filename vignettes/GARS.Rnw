@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{Titolo}
+%\VignetteIndexEntry{GARS: a  Genetic Algorithm for the identification of Robust Subsets of variables in high-dimensional and challenging datasets}
 %\VignettePackage{GARS}
 %\VignetteEngine{knitr::knitr}
 
