@@ -5,9 +5,9 @@ Title: GARS: Genetic Algorithm for the identification
  of Robust Subsets of variables in high-dimensional and challenging
  datasets
 Version: 1.7.2
-Author: Mattia Chiesa <mattia.chiesa@hotmail.it>, 
+Author: Mattia Chiesa <mattia.chiesa@cardiologicomonzino.it>, 
     Luca Piacentini <luca.piacentini@cardiologicomonzino.it>
-Maintainer: Mattia Chiesa <mattia.chiesa@hotmail.it>
+Maintainer: Mattia Chiesa <mattia.chiesa@cardiologicomonzino.it>
 Description: Feature selection aims to identify and remove redundant,
     irrelevant and noisy variables from high-dimensional datasets.
     Selecting informative features affects the subsequent 
